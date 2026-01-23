@@ -9,15 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Dialog extends Model
 {
     protected $fillable = [
-        'client_id', 'campaign_id', 'channel', 'external_chat_id',
+        'client_id', 'campaign_id', 'channel', 'external_chat_id', 'external_id',
         'current_status', 'is_ai_active', 'messages_count',
-        'last_message_at', 'last_client_message_at',
+        'last_message_at', 'last_client_message_at', 'closed_at',
     ];
 
     protected $casts = [
         'is_ai_active' => 'boolean',
         'last_message_at' => 'datetime',
         'last_client_message_at' => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     public function client(): BelongsTo

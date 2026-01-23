@@ -330,6 +330,109 @@
         "summary": "Webhook от Telegram",
         "responses": {"200": {"description": "OK"}}
       }
+    },
+    "/webhooks/chat2desk": {
+      "post": {
+        "tags": ["Webhooks"],
+        "summary": "Webhook от Chat2Desk",
+        "description": "Принимает события от Chat2Desk: inbox, outbox, outbox_status, new_client, close_dialog",
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/chat2desk/test": {
+      "get": {
+        "tags": ["Chat2Desk"],
+        "summary": "Проверить подключение к Chat2Desk",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {"description": "Подключение успешно"},
+          "500": {"description": "Ошибка подключения"}
+        }
+      }
+    },
+    "/chat2desk/channels": {
+      "get": {
+        "tags": ["Chat2Desk"],
+        "summary": "Получить список каналов Chat2Desk",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Список каналов"}}
+      }
+    },
+    "/chat2desk/webhooks": {
+      "get": {
+        "tags": ["Chat2Desk"],
+        "summary": "Получить список webhooks в Chat2Desk",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Список webhooks"}}
+      }
+    },
+    "/chat2desk/webhooks/setup": {
+      "post": {
+        "tags": ["Chat2Desk"],
+        "summary": "Настроить webhook в Chat2Desk",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "example": "C2D Admin Webhook"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Webhook создан"}}
+      }
+    },
+    "/chat2desk/send": {
+      "post": {
+        "tags": ["Chat2Desk"],
+        "summary": "Отправить сообщение клиенту",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["client_id", "message"],
+                "properties": {
+                  "client_id": {"type": "integer", "example": 1},
+                  "message": {"type": "string", "example": "Привет! Это тестовое сообщение."},
+                  "transport": {"type": "string", "enum": ["telegram", "whatsapp", "viber", "vk"]}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Сообщение поставлено в очередь"}}
+      }
+    },
+    "/chat2desk/send-by-phone": {
+      "post": {
+        "tags": ["Chat2Desk"],
+        "summary": "Отправить сообщение по номеру телефона",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone", "message"],
+                "properties": {
+                  "phone": {"type": "string", "example": "+79001234567"},
+                  "message": {"type": "string", "example": "Привет! Это тестовое сообщение."},
+                  "transport": {"type": "string", "enum": ["telegram", "whatsapp", "viber", "vk"]}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Сообщение отправлено"}}
+      }
     }
   }
 }
