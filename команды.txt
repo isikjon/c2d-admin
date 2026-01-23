@@ -1,0 +1,21 @@
+echo "=== ТАБЛИЦЫ БД ===" && mysql -u root -e "SHOW TABLES;" c2d_admin && echo "" && echo "=== РОЛИ ===" && mysql -u root -e "SELECT * FROM roles;" c2d_admin && echo "" && echo "=== АДМИН ===" && mysql -u root -e "SELECT id, name, email, status FROM users;" c2d_admin && echo "" && echo "=== API РОУТЫ ===" && cd /var/www/c2d-admin && php artisan route:list --path=api && echo "" && echo "=== ТЕСТ АВТОРИЗАЦИИ ===" && curl -s -X POST http://127.0.0.1/api/login -H "Content-Type: application/json" -H "Host: 212.67.11.93" -d '{"email":"admin@c2d.ru","password":"Admin2026!"}'
+
+mysql -u root -e "SHOW TABLES;" c2d_admin
+mysql -u root -e "SELECT * FROM roles;" c2d_admin
+mysql -u root -e "SELECT id, name, email, status FROM users;" c2d_admin
+mysql -u root -e "SELECT id, name, slug FROM products;" c2d_admin
+cd /var/www/c2d-admin && php artisan route:list --path=api
+apt install -y jq
+curl -s -X POST http://127.0.0.1/api/login \
+  -H "Content-Type: application/json" \
+  -H "Host: 212.67.11.93" \
+  -d '{"email":"admin@c2d.ru","password":"Admin2026!"}' | jq
+
+php -v && composer --version && mysql --version
+systemctl status nginx --no-pager -l | head -5
+systemctl status php8.3-fpm --no-pager -l | head -5
+systemctl status mysql --no-pager -l | head -5
+systemctl status redis --no-pager -l | head -5
+
+ls -la /var/www/c2d-admin/
+cd /var/www/c2d-admin && php artisan migrate:status

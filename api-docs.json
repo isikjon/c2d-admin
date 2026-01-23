@@ -1,0 +1,335 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "C2D Admin API",
+    "version": "1.0.0",
+    "description": "API для админки ИИ-агента и рассылки сообщений"
+  },
+  "servers": [
+    {"url": "/api", "description": "API Server"}
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Авторизация пользователя",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {"type": "string", "format": "email", "example": "admin@c2d.ru"},
+                  "password": {"type": "string", "example": "Admin2026!"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Успешная авторизация"},
+          "422": {"description": "Неверные учетные данные"}
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Выход из системы",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Успешный выход"}}
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Получить текущего пользователя",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Данные пользователя"}}
+      }
+    },
+    "/campaigns": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "Список рекламных кампаний",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "status", "in": "query", "schema": {"type": "string"}, "description": "Фильтр по статусу"}
+        ],
+        "responses": {"200": {"description": "Список кампаний"}}
+      },
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "Создать рекламную кампанию",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {"type": "string", "example": "Новогодняя акция"},
+                  "description": {"type": "string"},
+                  "product_id": {"type": "integer"},
+                  "trigger_action": {"type": "string"},
+                  "target_url": {"type": "string"},
+                  "max_retries": {"type": "integer", "example": 3}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"201": {"description": "Кампания создана"}}
+      }
+    },
+    "/campaigns/{id}": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "Получить кампанию по ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Данные кампании"}}
+      },
+      "put": {
+        "tags": ["Campaigns"],
+        "summary": "Обновить кампанию",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Кампания обновлена"}}
+      },
+      "delete": {
+        "tags": ["Campaigns"],
+        "summary": "Удалить кампанию",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Кампания удалена"}}
+      }
+    },
+    "/campaigns/{id}/launch": {
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "Запустить кампанию",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Кампания запущена"}}
+      }
+    },
+    "/campaigns/{id}/pause": {
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "Приостановить кампанию",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Кампания приостановлена"}}
+      }
+    },
+    "/clients": {
+      "get": {
+        "tags": ["Clients"],
+        "summary": "Список клиентов",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "search", "in": "query", "schema": {"type": "string"}, "description": "Поиск"}],
+        "responses": {"200": {"description": "Список клиентов"}}
+      },
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Создать клиента",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone"],
+                "properties": {
+                  "phone": {"type": "string", "example": "+79001234567"},
+                  "first_name": {"type": "string"},
+                  "last_name": {"type": "string"},
+                  "email": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"201": {"description": "Клиент создан"}}
+      }
+    },
+    "/clients/{id}": {
+      "get": {
+        "tags": ["Clients"],
+        "summary": "Получить клиента по ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Данные клиента"}}
+      },
+      "put": {
+        "tags": ["Clients"],
+        "summary": "Обновить клиента",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Клиент обновлен"}}
+      },
+      "delete": {
+        "tags": ["Clients"],
+        "summary": "Удалить клиента",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Клиент удален"}}
+      }
+    },
+    "/clients/import": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Импорт клиентов из JSON",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["clients"],
+                "properties": {
+                  "clients": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "phone": {"type": "string", "example": "+79001234567"},
+                        "first_name": {"type": "string"},
+                        "last_name": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Импорт завершен"}}
+      }
+    },
+    "/clients/export": {
+      "get": {
+        "tags": ["Clients"],
+        "summary": "Экспорт клиентов",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "JSON со списком клиентов"}}
+      }
+    },
+    "/dialogs": {
+      "get": {
+        "tags": ["Dialogs"],
+        "summary": "Список диалогов",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "status", "in": "query", "schema": {"type": "string"}},
+          {"name": "campaign_id", "in": "query", "schema": {"type": "integer"}}
+        ],
+        "responses": {"200": {"description": "Список диалогов"}}
+      }
+    },
+    "/dialogs/{id}": {
+      "get": {
+        "tags": ["Dialogs"],
+        "summary": "Получить диалог по ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Данные диалога"}}
+      }
+    },
+    "/dialogs/{id}/status": {
+      "post": {
+        "tags": ["Dialogs"],
+        "summary": "Обновить статус диалога",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": {"type": "string", "example": "ready_to_buy"},
+                  "metadata": {"type": "object"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Статус обновлен"}}
+      }
+    },
+    "/statistics/campaigns": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Статистика по кампаниям",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Статистика кампаний"}}
+      }
+    },
+    "/statistics/dialogs": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Статистика по диалогам",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Статистика диалогов"}}
+      }
+    },
+    "/statistics/export": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Экспорт статистики",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "JSON с полной статистикой"}}
+      }
+    },
+    "/webhooks/ai-agent": {
+      "post": {
+        "tags": ["Webhooks"],
+        "summary": "Webhook от ИИ-агента",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["chat_id", "status"],
+                "properties": {
+                  "chat_id": {"type": "string", "example": "chat_123"},
+                  "status": {"type": "string", "example": "presentation"},
+                  "client_phone": {"type": "string", "example": "+79001234567"},
+                  "collected_data": {"type": "object"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "OK"}}
+      }
+    },
+    "/webhooks/telegram": {
+      "post": {
+        "tags": ["Webhooks"],
+        "summary": "Webhook от Telegram",
+        "responses": {"200": {"description": "OK"}}
+      }
+    }
+  }
+}
