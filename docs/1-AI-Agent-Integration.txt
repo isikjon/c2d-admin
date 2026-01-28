@@ -1,0 +1,240 @@
+ИНТЕГРАЦИЯ С AI-АГЕНТОМ
+
+WEBHOOK ДЛЯ ПРИЁМА СТАТУСОВ ОТ AI-АГЕНТА
+
+URL: POST http://212.67.11.93/api/webhooks/ai-agent
+Content-Type: application/json
+
+ФОРМАТ ЗАПРОСА:
+
+{
+  "chat_id": "ai_chat_12345",
+  "client_phone": "+79001234567",
+  "status": "presentation",
+  "status_data": {
+    "callback_date": "2026-01-30",
+    "callback_time": "14:00",
+    "no_response_minutes": 120
+  },
+  "collected_data": {
+    "name": "Иван Иванов",
+    "email": "ivan@mail.ru",
+    "product_type": "osago",
+    "product_data": {}
+  }
+}
+
+ПОЛЯ:
+
+chat_id - ID диалога в системе AI-агента (обязательно)
+client_phone - телефон клиента (обязательно)
+status - текущий статус диалога (обязательно)
+status_data - дополнительные данные статуса (опционально)
+  callback_date - дата перезвона (для статуса contact_later)
+  callback_time - время перезвона (для статуса contact_later)
+  no_response_minutes - минут без ответа (для статуса no_response)
+collected_data - собранные данные о клиенте (опционально)
+  name - имя клиента
+  product_type - тип продукта (mortgage, kasko, osago, property)
+  product_data - данные по продукту
+
+
+СТАТУСЫ ДИАЛОГА (генерируются AI-агентом):
+
+presentation - презентация
+building_communication - налаживание коммуникации
+product_questions - вопросы по продукту
+objection_handling - отработка возражений
+contact_later - написать позже (+ дата, время)
+ready_to_process - готов оформлять
+provided_all_data - предоставил все данные
+provided_partial_data - предоставил часть данных
+not_provided_data - не предоставил данные
+call_manager - вызов менеджера
+strong_negative - сильный негатив
+policy_issued - оформил полис
+refused_to_issue - отказался оформлять полис
+cross_sale - кросс-продажа
+consultation_request - запросил консультацию по доп продукту
+no_response - не отвечает
+
+
+ДОПОЛНИТЕЛЬНЫЕ СТАТУСЫ ДЛЯ МОНИТОРИНГА:
+
+with_responses - с ответами
+without_responses - без ответов
+not_delivered - не дошли
+blocked - заблокированные
+read - прочитанные
+unread - не прочитанные
+goal_completed - выполнена цель
+goal_not_completed - не выполнена цель
+link_clicked - произошел переход по ссылке
+
+
+СТАТУСЫ ДЛЯ ОТПРАВКИ В CRM (создание сделки/лида):
+
+ready_to_process - готов оформлять
+provided_all_data - предоставил все данные
+provided_partial_data - предоставил часть данных
+not_provided_data - не предоставил данные
+call_manager - вызов менеджера
+strong_negative - сильный негатив
+policy_issued - оформил полис
+refused_to_issue - отказался оформлять полис
+cross_sale - кросс-продажа
+consultation_request - запросил консультацию по доп продукту
+
+
+ДАННЫЕ ПО ПРОДУКТАМ (collected_data.product_data):
+
+Ипотечное страхование (mortgage):
+{
+  "property_value": 5000000,
+  "property_city": "Москва",
+  "loan_amount": 3000000,
+  "additional_phone": "+79009876543",
+  "payment_term": 240,
+  "co_borrowers": 1,
+  "full_name": "Иванов Иван Иванович"
+}
+
+КАСКО (kasko):
+{
+  "brand": "Toyota",
+  "model": "Camry",
+  "year": 2023,
+  "power": 181,
+  "driver_age": 35,
+  "driver_experience": 10,
+  "insured_persons": ["Иванов И.И.", "Иванова М.П."]
+}
+
+ОСАГО (osago):
+{
+  "brand": "Toyota",
+  "model": "Camry",
+  "year": 2023,
+  "power": 181
+}
+
+Имущественное страхование (property):
+{
+  "property_city": "Москва",
+  "property_address": "ул. Ленина, д. 10, кв. 5",
+  "area": 65,
+  "year_built": 2015,
+  "risks": ["fire", "flood", "theft"]
+}
+
+
+ПРИМЕР ЗАПРОСА (статус "написать позже"):
+
+curl -X POST http://212.67.11.93/api/webhooks/ai-agent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chat_id": "ai_chat_12345",
+    "client_phone": "+79001234567",
+    "status": "contact_later",
+    "status_data": {
+      "callback_date": "2026-01-30",
+      "callback_time": "14:00"
+    }
+  }'
+
+
+ПРИМЕР ЗАПРОСА (статус "предоставил все данные" для ОСАГО):
+
+curl -X POST http://212.67.11.93/api/webhooks/ai-agent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chat_id": "ai_chat_12345",
+    "client_phone": "+79001234567",
+    "status": "provided_all_data",
+    "collected_data": {
+      "name": "Иванов Иван Иванович",
+      "product_type": "osago",
+      "product_data": {
+        "brand": "Toyota",
+        "model": "Camry",
+        "year": 2023,
+        "power": 181
+      }
+    }
+  }'
+
+
+ПРИМЕР ЗАПРОСА (статус "не отвечает"):
+
+curl -X POST http://212.67.11.93/api/webhooks/ai-agent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chat_id": "ai_chat_12345",
+    "client_phone": "+79001234567",
+    "status": "no_response",
+    "status_data": {
+      "no_response_minutes": 1500
+    }
+  }'
+
+
+ОТВЕТ СЕРВЕРА:
+
+Успех:
+{"success":true,"message":"Статус обновлён","dialog_id":123}
+
+Ошибка:
+{"success":false,"message":"Описание ошибки"}
+
+
+ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ДИАЛОГАХ
+
+1. Получить токен:
+
+curl -X POST http://212.67.11.93/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@c2d.ru","password":"Admin2026!"}'
+
+2. Список диалогов:
+
+curl http://212.67.11.93/api/dialogs \
+  -H "Authorization: Bearer TOKEN"
+
+Фильтрация по статусу:
+curl "http://212.67.11.93/api/dialogs?status=ready_to_process" \
+  -H "Authorization: Bearer TOKEN"
+
+Фильтрация по кампании:
+curl "http://212.67.11.93/api/dialogs?campaign_id=5" \
+  -H "Authorization: Bearer TOKEN"
+
+3. Диалог по ID с историей статусов:
+
+curl http://212.67.11.93/api/dialogs/123 \
+  -H "Authorization: Bearer TOKEN"
+
+
+ПОЛУЧЕНИЕ ИНФОРМАЦИИ О КЛИЕНТЕ
+
+По ID:
+curl http://212.67.11.93/api/clients/456 \
+  -H "Authorization: Bearer TOKEN"
+
+Поиск по телефону:
+curl "http://212.67.11.93/api/clients?search=79001234567" \
+  -H "Authorization: Bearer TOKEN"
+
+
+ОТПРАВКА СООБЩЕНИЙ КЛИЕНТУ
+
+По client_id:
+curl -X POST http://212.67.11.93/api/chat2desk/send \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"client_id":456,"message":"Текст сообщения","transport":"telegram"}'
+
+По телефону:
+curl -X POST http://212.67.11.93/api/chat2desk/send-by-phone \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"+79001234567","message":"Текст сообщения","transport":"telegram"}'

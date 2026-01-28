@@ -1,0 +1,154 @@
+C2D ADMIN - ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ
+
+СТЕК ТЕХНОЛОГИЙ
+
+Framework: Laravel 12
+PHP: 8.3
+Database: MySQL 8
+Cache/Queue: Redis
+Auth: Laravel Sanctum
+Permissions: Spatie Laravel-Permission
+
+
+СТРУКТУРА ПРОЕКТА
+
+app/
+  Http/Controllers/Api/
+    AuthController.php - авторизация
+    CampaignController.php - кампании
+    ClientController.php - клиенты
+    DialogController.php - диалоги и webhooks
+    StatisticsController.php - статистика
+    Chat2DeskController.php - интеграция Chat2Desk
+  Models/
+    User.php
+    Organization.php
+    Client.php
+    Campaign.php
+    Dialog.php
+    DialogStatus.php
+    Product.php
+    Mailing.php
+    MailingMessage.php
+  Services/
+    Chat2DeskService.php - сервис Chat2Desk
+  Jobs/
+    SendChat2DeskMessage.php - отправка сообщений
+config/
+  chat2desk.php - конфиг Chat2Desk
+database/
+  migrations/ - миграции БД
+  seeders/ - сидеры
+routes/
+  api.php - API роуты
+public/
+  api-docs.json - OpenAPI спецификация
+  swagger.html - Swagger UI
+
+
+ТАБЛИЦЫ БД
+
+organizations - организации
+users - пользователи системы
+clients - клиенты
+products - страховые продукты
+campaigns - кампании
+dialogs - диалоги с клиентами
+dialog_statuses - история статусов диалогов
+mailings - рассылки
+mailing_messages - сообщения рассылок
+telegram_accounts - Telegram аккаунты
+
+
+API ENDPOINTS
+
+Авторизация:
+POST /api/login - получить токен
+POST /api/logout - выход
+GET /api/me - текущий пользователь
+
+Кампании:
+GET /api/campaigns - список
+POST /api/campaigns - создать
+GET /api/campaigns/{id} - получить
+PUT /api/campaigns/{id} - обновить
+DELETE /api/campaigns/{id} - удалить
+POST /api/campaigns/{id}/launch - запустить
+POST /api/campaigns/{id}/pause - приостановить
+
+Клиенты:
+GET /api/clients - список
+POST /api/clients - создать
+GET /api/clients/{id} - получить
+PUT /api/clients/{id} - обновить
+DELETE /api/clients/{id} - удалить
+POST /api/clients/import - импорт JSON
+GET /api/clients/export - экспорт JSON
+
+Диалоги:
+GET /api/dialogs - список
+GET /api/dialogs/{id} - с историей статусов
+POST /api/dialogs/{id}/status - обновить статус
+
+Статистика:
+GET /api/statistics/campaigns - по кампаниям
+GET /api/statistics/dialogs - по диалогам
+GET /api/statistics/export - экспорт
+
+Chat2Desk:
+GET /api/chat2desk/test - проверка подключения
+GET /api/chat2desk/channels - список каналов
+POST /api/chat2desk/send - отправить сообщение
+POST /api/chat2desk/send-by-phone - отправить по телефону
+
+Webhooks (без авторизации):
+POST /api/webhooks/ai-agent - от AI-агента
+POST /api/webhooks/telegram - от Telegram
+POST /api/webhooks/chat2desk - от Chat2Desk
+
+
+АВТОРИЗАЦИЯ
+
+Bearer токен в заголовке:
+Authorization: Bearer 1|abc123...
+
+
+РОЛИ
+
+super_admin - полный доступ
+admin_lk - админ личного кабинета
+user_lk - пользователь ЛК
+support - поддержка
+
+
+CHAT2DESK КОНФИГУРАЦИЯ
+
+.env:
+CHAT2DESK_API_TOKEN=токен
+CHAT2DESK_CHANNEL_ID=100333
+CHAT2DESK_TRANSPORT=tg_user
+
+События webhook от Chat2Desk:
+inbox - входящее сообщение
+outbox - исходящее сообщение
+outbox_status - статус доставки
+new_client - новый клиент
+close_dialog - закрытие диалога
+
+
+УСТАНОВКА
+
+git clone https://github.com/isikjon/c2d-admin.git
+cd c2d-admin
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+chown -R www-data:www-data storage bootstrap/cache
+
+
+ТЕСТОВЫЕ ДАННЫЕ
+
+Админ: admin@c2d.ru / Admin2026!
+Организация: C2D Admin
+Продукты: страховые продукты

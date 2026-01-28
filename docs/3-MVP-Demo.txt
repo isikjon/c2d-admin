@@ -1,0 +1,121 @@
+C2D ADMIN MVP - ДЕМО
+
+ДОСТУПЫ
+
+API: http://212.67.11.93/api
+Swagger: http://212.67.11.93/swagger.html
+GitHub: https://github.com/isikjon/c2d-admin
+
+Логин: admin@c2d.ru
+Пароль: Admin2026!
+
+
+ТЕСТИРОВАНИЕ
+
+1. АВТОРИЗАЦИЯ
+
+curl -X POST http://212.67.11.93/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@c2d.ru","password":"Admin2026!"}'
+
+Ответ: {"success":true,"data":{"user":{...},"token":"1|abc..."}}
+
+
+2. КАМПАНИИ
+
+Создать:
+curl -X POST http://212.67.11.93/api/campaigns \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Тестовая кампания","description":"Описание"}'
+
+Список:
+curl http://212.67.11.93/api/campaigns \
+  -H "Authorization: Bearer TOKEN"
+
+Запустить:
+curl -X POST http://212.67.11.93/api/campaigns/1/launch \
+  -H "Authorization: Bearer TOKEN"
+
+
+3. КЛИЕНТЫ
+
+Создать:
+curl -X POST http://212.67.11.93/api/clients \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"+79001234567","first_name":"Иван","last_name":"Петров"}'
+
+Импорт:
+curl -X POST http://212.67.11.93/api/clients/import \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"clients":[{"phone":"+79001111111","first_name":"Клиент 1"},{"phone":"+79002222222","first_name":"Клиент 2"}]}'
+
+Экспорт:
+curl http://212.67.11.93/api/clients/export \
+  -H "Authorization: Bearer TOKEN"
+
+
+4. ДИАЛОГИ
+
+Список:
+curl http://212.67.11.93/api/dialogs \
+  -H "Authorization: Bearer TOKEN"
+
+С историей статусов:
+curl http://212.67.11.93/api/dialogs/1 \
+  -H "Authorization: Bearer TOKEN"
+
+Обновить статус:
+curl -X POST http://212.67.11.93/api/dialogs/1/status \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"ready_to_buy"}'
+
+
+5. WEBHOOK ОТ AI-АГЕНТА
+
+curl -X POST http://212.67.11.93/api/webhooks/ai-agent \
+  -H "Content-Type: application/json" \
+  -d '{"chat_id":"ai_123","client_phone":"+79001234567","status":"presentation","collected_data":{"interest":"ОСАГО"}}'
+
+
+6. CHAT2DESK
+
+Проверка подключения:
+curl http://212.67.11.93/api/chat2desk/test \
+  -H "Authorization: Bearer TOKEN"
+
+Отправить сообщение:
+curl -X POST http://212.67.11.93/api/chat2desk/send-by-phone \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"+79001234567","message":"Тест","transport":"telegram"}'
+
+
+7. СТАТИСТИКА
+
+По кампаниям:
+curl http://212.67.11.93/api/statistics/campaigns \
+  -H "Authorization: Bearer TOKEN"
+
+По диалогам:
+curl http://212.67.11.93/api/statistics/dialogs \
+  -H "Authorization: Bearer TOKEN"
+
+
+СТАТУС MVP
+
+1. Архитектура БД - готово
+2. Авторизация - готово
+3. Кампании - готово
+4. Клиенты (импорт/экспорт) - готово
+5. Chat2Desk интеграция - готово
+6. AI-агент webhook - готово
+7. Статусы диалогов - готово
+8. Статистика - готово
+9. Интерфейс - frontend
+10. Деплой - готово
+11. Документация - готово
+12. Telegram - через Chat2Desk

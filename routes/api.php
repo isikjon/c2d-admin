@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients/export', [ClientController::class, 'export']);
 
     // Диалоги
+    Route::get('dialogs/statuses', [DialogController::class, 'getStatuses']);
     Route::get('dialogs', [DialogController::class, 'index']);
     Route::get('dialogs/{dialog}', [DialogController::class, 'show']);
     Route::post('dialogs/{dialog}/status', [DialogController::class, 'updateStatus']);
