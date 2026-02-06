@@ -38,8 +38,8 @@ class Chat2DeskController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ошибка подключения к Chat2Desk',
-                'error' => $e->getMessage(),
+                'message' => 'Ошибка подключения к Chat2Desk: ' . $e->getMessage(),
+                'errors' => new \stdClass(),
             ], 500);
         }
     }
@@ -59,7 +59,8 @@ class Chat2DeskController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'errors' => new \stdClass(),
             ], 500);
         }
     }
@@ -79,7 +80,8 @@ class Chat2DeskController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'errors' => new \stdClass(),
             ], 500);
         }
     }
@@ -107,7 +109,8 @@ class Chat2DeskController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'errors' => new \stdClass(),
             ], 500);
         }
     }
@@ -140,7 +143,8 @@ class Chat2DeskController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'errors' => new \stdClass(),
             ], 500);
         }
     }
@@ -171,7 +175,8 @@ class Chat2DeskController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'errors' => new \stdClass(),
             ], 500);
         }
     }

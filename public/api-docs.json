@@ -197,14 +197,18 @@
       },
       "ErrorResponse": {
         "type": "object",
+        "description": "Единый формат ошибок для всех ответов API (401, 403, 404, 500)",
         "properties": {
           "success": { "type": "boolean", "example": false },
-          "message": { "type": "string", "example": "Описание ошибки" }
+          "message": { "type": "string", "example": "Описание ошибки" },
+          "errors": { "type": "object", "example": {} }
         }
       },
       "ValidationErrorResponse": {
         "type": "object",
+        "description": "Ошибка валидации (422). Поле errors содержит ошибки по каждому полю.",
         "properties": {
+          "success": { "type": "boolean", "example": false },
           "message": { "type": "string", "example": "The given data was invalid." },
           "errors": {
             "type": "object",
@@ -212,7 +216,7 @@
               "type": "array",
               "items": { "type": "string" }
             },
-            "example": { "email": ["Поле email обязательно."] }
+            "example": { "email": ["Поле email обязательно."], "password": ["Поле password обязательно."] }
           }
         }
       }

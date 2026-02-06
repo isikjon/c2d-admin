@@ -146,7 +146,8 @@ class DialogController extends Controller
         if (!$dialog) {
             return response()->json([
                 'success' => false,
-                'message' => 'Клиент не найден в системе'
+                'message' => 'Клиент не найден в системе',
+                'errors' => new \stdClass(),
             ], 404);
         }
 
@@ -200,7 +201,7 @@ class DialogController extends Controller
     public function telegramWebhook(Request $request): JsonResponse
     {
         \Log::info('Telegram webhook', $request->all());
-        return response()->json(['ok' => true]);
+        return response()->json(['success' => true]);
     }
 
     /**
